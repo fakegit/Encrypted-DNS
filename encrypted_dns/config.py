@@ -112,6 +112,7 @@ class Config:
         if not file_init:
             self.config = self.get_default_config()
             self.save()
+            print('Generated Config File:', self.file_name)
         else:
             config_file = open(self.file_name)
             self.config = json.loads(config_file.read())

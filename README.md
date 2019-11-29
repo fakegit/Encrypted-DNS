@@ -12,17 +12,23 @@ Languages: [English](https://github.com/Siujoeng-Lau/Encrypted-DNS/blob/master/R
 
 * Install [Python 3.7](https://www.python.org/downloads/).
 
-* Clone Github Repository.
+* Install package via `pip`.
 
 ```
-$ git clone https://github.com/Siujoeng-Lau/Encrypted-DNS.git
+$ pip3 install encrypted-dns
 ```
 
-* Run Encrypted-DNS Server.
+* Generate and edit config file.
 
 ```
-$ cd Encrypted-DNS
-$ sudo python3 main.py
+$ sudo encrypted-dns --init
+$ vim ~/.config/encrypted_dns/config.json
+```
+
+* Run Encrypted-DNS Resolver.
+
+```
+$ sudo encrypted-dns
 ```
 
 * Test DNS Query.

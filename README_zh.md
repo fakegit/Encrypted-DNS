@@ -13,17 +13,23 @@ Encrypted-DNS 是一个用于转发 DNS 请求的 DNS 服务器. 它支持 UDP, 
 
 * 安装 [Python 3.7](https://www.python.org/downloads/).
 
-* 克隆 Github 仓库.
+* 使用 `pip` 安装 `encrypted-dns`.
 
 ```
-$ git clone https://github.com/Siujoeng-Lau/Encrypted-DNS.git
+$ pip3 install encrypted-dns
+```
+
+* 生成并编辑配置文件.
+
+```
+$ sudo encrypted-dns --init
+$ vim ~/.config/encrypted_dns/config.json
 ```
 
 * 运行 Encrypted-DNS 服务器.
 
 ```
-$ cd Encrypted-DNS
-$ sudo python3 main.py
+$ sudo encrypted-dns
 ```
 
 * 测试 DNS 请求.
