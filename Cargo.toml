@@ -18,7 +18,7 @@ lto = "thin"
 [dependencies]
 tokio = { version = "1.18.2", features = ["rt", "net", "sync", "macros", "io-util"] }
 clap = { version = "3.1.6", features = ["derive"] }
-reqwest = { version = "0.11.10", features = ["json", "gzip", "brotli"] }
+reqwest = { version = "0.11.10", features = ["json", "gzip", "brotli", "native-tls-vendored"] }
 http = "0.2.6"
 lru = "0.7.3"
 trust-dns-proto = "0.21.2"
