@@ -3,7 +3,7 @@ extern crate lru;
 use lru::LruCache;
 use std::{
     sync::{Arc, Mutex},
-    time::{Duration, Instant},
+    time::{Duration, Instant}, num::NonZeroUsize,
 };
 use trust_dns_proto::op::{message::Message, Query};
 
@@ -27,7 +27,7 @@ pub struct Cache {
 impl Cache {
     pub fn new() -> Self {
         Cache {
-            lru_cache: Arc::new(Mutex::new(LruCache::new(1024))),
+            lru_cache: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(1024).unwrap()))),
         }
     }
 
