@@ -7,7 +7,7 @@ pub async fn build_test_listener() -> UdpListener {
     let local_address = String::from("127.0.0.1");
     let local_port = 10053;
 
-    let https_client = HttpsClient::new(upstream_address, upstream_port)
+    let https_client = HttpsClient::new(upstream_address, upstream_port, true)
         .await
         .unwrap();
     UdpListener::new(local_address, local_port, https_client)

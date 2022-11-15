@@ -21,6 +21,7 @@ async fn main() -> ExitCode {
         local_port,
         upstream_port,
         verbose,
+        cache,
     } = cli::Args::parse();
 
     if verbose {
@@ -35,7 +36,7 @@ async fn main() -> ExitCode {
             .init();
     }
 
-    let https_client = match HttpsClient::new(upstream_address, upstream_port).await {
+    let https_client = match HttpsClient::new(upstream_address, upstream_port, cache).await {
         Ok(https_client) => https_client,
         Err(error) => {
             error!("{}", error);

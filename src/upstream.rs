@@ -17,13 +17,13 @@ pub struct HttpsClient {
     host: String,
     port: u16,
     https_client: Arc<Client>,
-    cache: Cache,
+    cache: Option<Cache>,
 }
 
 impl HttpsClient {
     /// The `new` method constructs a new `HttpsClient` struct that is prepared to forward
     /// DNS requests to the upstream DNS-over-HTTPS server.
-    pub async fn new(host: String, port: u16) -> Result<Self, UpstreamError> {
+    pub async fn new(host: String, port: u16, cache: bool) -> Result<Self, UpstreamError> {
         let mut headers = HeaderMap::new();
         headers.insert(
             CONTENT_TYPE,
@@ -49,15 +49,17 @@ impl HttpsClient {
             host,
             port,
             https_client,
-            cache: Cache::new(),
+            cache: if cache { Some(Cache::new()) } else { None },
         })
     }
 
     /// The `process` method accepts a `request_message`, encapsulates the DNS request into
     /// an HTTPS request, sends it to the upstream DNS-over-HTTPS server, and returns the response.
     pub async fn process(&mut self, request_message: Message) -> Result<Message, UpstreamError> {
-        if let Some(response_message) = self.cache.get(&request_message) {
-            return Ok(response_message);
+        if let Some(cache) = &mut self.cache {
+            if let Some(response_message) = cache.get(&request_message) {
+                return Ok(response_message);
+            }
         }
 
         let raw_request_message = request_message.to_vec().map_err(|_| Resolve)?;
@@ -67,7 +69,10 @@ impl HttpsClient {
         let response = request.send().await.map_err(|_| Resolve)?;
         let raw_response_message = response.bytes().await.map_err(|_| Resolve)?;
         let message = Message::from_vec(&raw_response_message).map_err(|_| Resolve)?;
-        self.cache.put(message.clone());
+
+        if let Some(cache) = &mut self.cache {
+            cache.put(message.clone());
+        }
 
         Ok(message)
     }
