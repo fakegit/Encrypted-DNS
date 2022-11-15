@@ -8,10 +8,10 @@ use tracing::error;
 mod bootstrap;
 mod cache;
 mod cli;
+mod common;
 mod error;
 mod local;
 mod upstream;
-mod utils;
 
 #[tokio::main]
 async fn main() -> ExitCode {

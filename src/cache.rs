@@ -2,8 +2,9 @@ extern crate lru;
 
 use lru::LruCache;
 use std::{
+    num::NonZeroUsize,
     sync::{Arc, Mutex},
-    time::{Duration, Instant}, num::NonZeroUsize,
+    time::{Duration, Instant},
 };
 use trust_dns_proto::op::{message::Message, Query};
 

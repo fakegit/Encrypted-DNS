@@ -1,4 +1,4 @@
-use https_dns::utils::{build_request_message, build_test_listener};
+use https_dns::common::build_request_message;
 use std::{collections::HashMap, net::Ipv4Addr};
 use tokio::{net::UdpSocket, test};
 use trust_dns_proto::{
@@ -6,9 +6,11 @@ use trust_dns_proto::{
     rr::{Name, RData, RecordType},
 };
 
+mod common;
+
 #[test]
 async fn a_record() {
-    let udp_listener = build_test_listener().await;
+    let udp_listener = common::build_test_listener().await;
     tokio::spawn(async move {
         udp_listener.listen().await;
     });

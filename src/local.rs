@@ -17,18 +17,15 @@ impl UdpListener {
         port: u16,
         https_client: HttpsClient,
     ) -> Result<Self, LocalError> {
-        let socket_addr: SocketAddr = match format!("{}:{}", host, port).parse() {
-            Ok(socket_addr) => socket_addr,
-            Err(_) => return Err(InvalidAddress(host, port)),
-        };
-
-        let udp_socket = match UdpSocket::bind(socket_addr).await {
-            Ok(udp_socket) => Arc::new(udp_socket),
-            Err(error) => match error.kind() {
-                io::ErrorKind::PermissionDenied => return Err(PermissionDenied(host, port)),
-                _ => return Err(Unknown(host, port)),
+        let socket_addr: SocketAddr = format!("{}:{}", host, port)
+            .parse()
+            .map_err(|_| InvalidAddress(host.clone(), port))?;
+        let udp_socket = Arc::new(UdpSocket::bind(socket_addr).await.map_err(
+            |err| match err.kind() {
+                io::ErrorKind::PermissionDenied => PermissionDenied(host.clone(), port),
+                _ => Unknown(host.clone(), port),
             },
-        };
+        )?);
         info!("listened on {}:{}", host, port);
 
         Ok(UdpListener {
@@ -97,7 +94,7 @@ impl UdpListener {
                         .is_err()
                     {
                         warn!("failed to send the inbound response to the client");
-                    };
+                    }
                 }
                 .instrument(info_span!("listen", ?addr)),
             );
