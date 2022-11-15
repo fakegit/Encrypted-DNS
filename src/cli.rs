@@ -14,4 +14,7 @@ pub struct Args {
 
     #[arg(long, default_value = "443")]
     pub upstream_port: u16,
+
+    #[arg(short, long)]
+    pub verbose: bool,
 }
