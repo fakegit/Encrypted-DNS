@@ -6,12 +6,12 @@ use tracing::{info, info_span, warn, Instrument};
 use trust_dns_proto::op::message::Message;
 
 #[derive(Debug)]
-pub struct UdpListener {
+pub struct LocalUdpListener {
     udp_socket: Arc<UdpSocket>,
     https_client: HttpsClient,
 }
 
-impl UdpListener {
+impl LocalUdpListener {
     pub async fn new(
         host: String,
         port: u16,
@@ -26,9 +26,9 @@ impl UdpListener {
                 _ => Unknown(host.clone(), port),
             },
         )?);
-        info!("listened on {}:{}", host, port);
+        info!("listened on udp://{}:{}", host, port);
 
-        Ok(UdpListener {
+        Ok(LocalUdpListener {
             udp_socket,
             https_client,
         })

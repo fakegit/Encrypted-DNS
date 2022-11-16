@@ -1,8 +1,10 @@
 use crate::cli::Args;
-use crate::local::UdpListener;
+use crate::tcp::LocalTcpListener;
+use crate::udp::LocalUdpListener;
 use crate::upstream::HttpsClient;
 use clap::Parser;
 use std::process::ExitCode;
+use tokio::join;
 use tracing::{error, Level};
 
 mod bootstrap;
@@ -10,7 +12,8 @@ mod cache;
 mod cli;
 mod common;
 mod error;
-mod local;
+mod tcp;
+mod udp;
 mod upstream;
 
 #[tokio::main]
@@ -44,14 +47,34 @@ async fn main() -> ExitCode {
         }
     };
 
-    let udp_listener = match UdpListener::new(local_address, local_port, https_client).await {
+    let udp_listener = match LocalUdpListener::new(
+        local_address.clone(),
+        local_port,
+        https_client.clone(),
+    )
+    .await
+    {
         Ok(udp_listener) => udp_listener,
         Err(error) => {
             error!("{}", error);
             return ExitCode::FAILURE;
         }
     };
-    udp_listener.listen().await;
 
+    let tcp_listener = match LocalTcpListener::new(
+        local_address.clone(),
+        local_port,
+        https_client.clone(),
+    )
+    .await
+    {
+        Ok(udp_listener) => udp_listener,
+        Err(error) => {
+            error!("{}", error);
+            return ExitCode::FAILURE;
+        }
+    };
+
+    join!(tcp_listener.listen(), udp_listener.listen());
     ExitCode::SUCCESS
 }
